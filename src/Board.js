@@ -75,7 +75,7 @@ export default class Board {
   }
 
   update() {
-    this.graphics.angle += -1;
+    this.graphics.angle += -0.3;
 
     if(cursors.up.isDown) {
         this.graphics.scale.x += -0.01;
