@@ -5,12 +5,19 @@ const defaultPoints = [
 ];
 
 const FACTOR = 80;
+let cursors = null;
 export default class Board {
 
   constructor(game, pointsArray = defaultPoints) {
     this.game = game;
-    this.pointsArray = pointsArray;
-    this.graphics = this.game.add.graphics(0,0);
+    this.pointsArray = pointsArray.map((pt) => { return [pt[0] - 5, pt[1] - 5]});
+    this.graphics = this.game.add.graphics(400,400);
+
+    this.drawOuter();
+    this.drawInner();
+    this.drawCorners();
+
+    cursors = game.input.keyboard.createCursorKeys();
   }
 
   drawOuter() {
@@ -26,9 +33,9 @@ export default class Board {
   drawInner() {
     if (!this.innerPoints) {
       const SHRINK = FACTOR/3;
-      const OFFSET = 5*(FACTOR - SHRINK);
+      const OFFSET = (FACTOR - SHRINK);
       this.innerPoints = this.pointsArray.map((pt) => {
-        return new Phaser.Point(pt[0]*SHRINK + OFFSET,pt[1]*SHRINK + OFFSET);
+        return new Phaser.Point(pt[0]*SHRINK + OFFSET/2,pt[1]*SHRINK + OFFSET/2);
       });
     }
 
@@ -68,29 +75,17 @@ export default class Board {
   }
 
   update() {
-    if (this.outerPoints) {
-      this.outerPoints.forEach( (pt) => {
-        pt.rotate(5*FACTOR, 5*FACTOR, 1, true);
-      });
+    this.graphics.angle += -1;
 
-      this.innerPoints.forEach( (pt) => {
-        pt.rotate(5*FACTOR, 5*FACTOR, 1, true);
-      });
-    }
-  }
+    if(cursors.up.isDown) {
+        this.graphics.scale.x += -0.01;
+        this.graphics.scale.y += -0.01;
+    } else if(cursors.down.isDown) {
+        this.graphics.scale.x += 0.01;
+        this.graphics.scale.y += 0.01;
+    }  }
 
   render() {
-    // erase previous ?!?
-    this.graphics.beginFill(0x000000);
-    this.graphics.drawPolygon(0,0,0,800,800,800,800,0);
-    this.graphics.endFill();
-
-    // draw rotated
-    this.drawOuter();
-    this.drawInner();
-    this.drawCorners();
-
-
 
   }
 
