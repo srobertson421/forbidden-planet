@@ -3,22 +3,23 @@ import Phaser from 'phaser'
 import Board from '../Board'
 
 export default class extends Phaser.State {
-
   init () {}
-  preload () {}
+  preload () {
+    this.ball = this.load.image('ball', '../../assets/images/mushroom2.png')
+  }
 
   create () {
-    this.board = new Board(this.game);
+    this.board = new Board(this.game)
   }
 
   render () {
-    this.board.render();
+    this.board.render()
 
     if (__DEV__) {
     }
   }
 
   update () {
-    this.board.update();
+    this.board.update()
   }
 }
