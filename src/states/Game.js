@@ -1,6 +1,6 @@
 /* globals __DEV__ */
 import Phaser from 'phaser'
-import Board from '../Board'
+import Board from '../lib/Board'
 
 export default class extends Phaser.State {
   init () {}

@@ -5,7 +5,7 @@ const defaultPoints = [
   [1, 1], [2, 5], [1, 8], [3, 7], [8, 8], [8, 4], [7, 4], [8, 1], [4, 2]
 ]
 
-let c = 0
+let step = 0
 
 const FACTOR = 80
 let cursors = null
@@ -80,7 +80,7 @@ export default class Board extends Phaser.Group {
     const innerPaths = []
     const op = this.outerPoints
     const ip = this.innerPoints
-    var resolution = 1 / 2000
+    var resolution = 1 / 200
 
     for (var p = 0; p < op.length; p++) {
       cornerlines.push(new Phaser.Line(op[p].x, op[p].y, ip[p].x, ip[p].y))
@@ -107,8 +107,8 @@ export default class Board extends Phaser.Group {
     spr.width = 5
     spr.height = 5
     const i = this.monsters.length - 1
-    spr.x = this.innerPaths[i][c].x
-    spr.y = this.innerPaths[i][c].y
+    spr.x = this.innerPaths[i][step].x
+    spr.y = this.innerPaths[i][step].y
   }
 
   update () {
@@ -124,12 +124,12 @@ export default class Board extends Phaser.Group {
 
     this.monsters.forEach((mo, i) => {
       if (this.innerPaths.length) {
-        mo.x = this.innerPaths[i][c].x
-        mo.y = this.innerPaths[i][c].y
-        if (c + 1 === this.innerPaths[i].length) {
-          c = 0
+        mo.x = this.innerPaths[i][step].x
+        mo.y = this.innerPaths[i][step].y
+        if (step + 1 === this.innerPaths[i].length) {
+          step = 0
         } else {
-          c += 1
+          step += 1
         }
       }
     })
