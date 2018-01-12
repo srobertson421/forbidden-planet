@@ -1,11 +1,13 @@
 import Colors from './colors'
 import Phaser from 'phaser'
+import RailMonster from './RailMonster'
 
 const defaultPoints = [
   [1, 1], [2, 5], [1, 8], [3, 7], [8, 8], [8, 4], [7, 4], [8, 1], [4, 2]
 ]
 
 let step = 0
+const NUM_STEPS = 2000
 
 const FACTOR = 80
 let cursors = null
@@ -25,9 +27,8 @@ export default class Board extends Phaser.Group {
     this.drawConnectors()
 
     this.monsters = []
-
-    defaultPoints.forEach(() => {
-      this.placeMonster('ball')
+    this.cornerlines.forEach((line) => {
+      this.placeMonster(line)
     })
     //  cursors = game.state.input.keyboard.createCursorKeys()
   }
@@ -77,38 +78,30 @@ export default class Board extends Phaser.Group {
 
   drawConnectors () {
     const cornerlines = []
-    const innerPaths = []
     const op = this.outerPoints
     const ip = this.innerPoints
-    var resolution = 1 / 200
 
     for (var p = 0; p < op.length; p++) {
-      cornerlines.push(new Phaser.Line(op[p].x, op[p].y, ip[p].x, ip[p].y))
-
-      innerPaths[p] = []
-      let pointsX = [ip[p].x, op[p].x]
-      let pointsY = [ip[p].y, op[p].y]
-      for (var r = 0; r <= 1; r += resolution) {
-        innerPaths[p].push({
-          x: Phaser.Math.linearInterpolation(pointsX, r),
-          y: Phaser.Math.linearInterpolation(pointsY, r)
-        })
-      }
+      cornerlines.push(new Phaser.Line(ip[p].x, ip[p].y, op[p].x, op[p].y))
     }
 
-    this.innerPaths = innerPaths
-
+    this.cornerlines = cornerlines
     this._drawLines(cornerlines, Colors.LIGHT)
   }
 
-  placeMonster (image) {
-    const spr = this.create(0, 0, 'ball')
-    this.monsters.push(spr)
-    spr.width = 5
-    spr.height = 5
-    const i = this.monsters.length - 1
-    spr.x = this.innerPaths[i][step].x
-    spr.y = this.innerPaths[i][step].y
+  placeMonster (line) {
+    const startPt = {
+      x: line.start.x,
+      y: line.start.y
+    }
+    const endPt = {
+      x: line.end.x,
+      y: line.end.y
+    }
+
+    const onFinish = () => {}
+
+    this.monsters.push(new RailMonster(this, startPt, endPt, NUM_STEPS, onFinish))
   }
 
   update () {
@@ -123,14 +116,11 @@ export default class Board extends Phaser.Group {
     // }
 
     this.monsters.forEach((mo, i) => {
-      if (this.innerPaths.length) {
-        mo.x = this.innerPaths[i][step].x
-        mo.y = this.innerPaths[i][step].y
-        if (step + 1 === this.innerPaths[i].length) {
-          step = 0
-        } else {
-          step += 1
-        }
+      mo.update(step)
+      if (step + 1 === NUM_STEPS) {
+        step = 0
+      } else {
+        step += 1
       }
     })
   }
