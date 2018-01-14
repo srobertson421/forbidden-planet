@@ -7,7 +7,7 @@ const defaultPoints = [
 ]
 
 let step = 0
-const NUM_STEPS = 2000
+const NUM_STEPS = 5000
 
 const FACTOR = 80
 let cursors = null
@@ -27,8 +27,11 @@ export default class Board extends Phaser.Group {
     this.drawConnectors()
 
     this.monsters = []
-    this.cornerlines.forEach((line) => {
-      this.placeMonster(line)
+    this.cornerlines.forEach((line, i) => {
+      const next = this.cornerlines[(i + 1 === this.cornerlines.length ? 0 : i + 1)];
+      const midStart = { x: (line.start.x + next.start.x)/2, y: (line.start.y + next.start.y)/2}
+      const midEnd = { x: (line.end.x + next.end.x)/2, y: (line.end.y + next.end.y)/2}
+      this.placeMonster(new Phaser.Line(midStart.x, midStart.y, midEnd.x, midEnd.y))
     })
     //  cursors = game.state.input.keyboard.createCursorKeys()
   }
