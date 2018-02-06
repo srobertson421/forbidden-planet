@@ -13,7 +13,7 @@ export default class RailMonster {
     this.spr.lineTo(3, 3)
     this.spr.moveTo(-2, 3)// moving position of graphic if you draw mulitple lines
     this.spr.lineTo(3, -2)
-    board.add(this.spr);
+    board.add(this.spr)
 
     const path = []
     let pointsX = [startPt.x, endPt.x]
@@ -34,8 +34,8 @@ export default class RailMonster {
     this.spr.x = this.path[step].x
     this.spr.y = this.path[step].y
 
-    this.spr.angle += 1
-    this.spr.scale.x = step*3/this.path.length
-    this.spr.scale.y = step*3/this.path.length
+    this.spr.angle += 5
+    this.spr.scale.x = step * 5 / this.path.length
+    this.spr.scale.y = step * 5 / this.path.length
   }
 }

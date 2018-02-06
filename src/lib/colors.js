@@ -3,5 +3,5 @@ export default {
   'MDARK': 0x244F25,
   'HI': 0x1EFC1E,
   'MLIGHT': 0x209300,
-  'LIGHT': 0x63C132,
+  'LIGHT': 0x63C132
 }

@@ -1,16 +1,17 @@
 import Colors from './colors'
 import Phaser from 'phaser'
 import RailMonster from './RailMonster'
+import Ship from './Ship'
+import helpers from './helpers'
 
 const defaultPoints = [
-  [1, 1], [2, 5], [1, 8], [3, 7], [8, 8], [8, 4], [7, 4], [8, 1], [4, 2]
+  [1, 1], [1, 5], [1, 8], [3, 7], [8, 8], [8, 4], [7, 4], [8, 1], [4, 2]
 ]
 
 let step = 0
 const NUM_STEPS = 5000
 
 const FACTOR = 80
-let cursors = null
 const GAME_SIZE = 800
 
 export default class Board extends Phaser.Group {
@@ -21,6 +22,7 @@ export default class Board extends Phaser.Group {
     this.x = GAME_SIZE / 2
     this.y = GAME_SIZE / 2
     this.add(this.graphics)
+    this.game = game
 
     this.drawOuter()
     this.drawInner()
@@ -28,19 +30,28 @@ export default class Board extends Phaser.Group {
 
     this.monsters = []
     this.cornerlines.forEach((line, i) => {
-      const next = this.cornerlines[(i + 1 === this.cornerlines.length ? 0 : i + 1)];
-      const midStart = { x: (line.start.x + next.start.x)/2, y: (line.start.y + next.start.y)/2}
-      const midEnd = { x: (line.end.x + next.end.x)/2, y: (line.end.y + next.end.y)/2}
+      const next = helpers.next(this.cornerlines, i)
+      const midStart = { x: (line.start.x + next.start.x) / 2, y: (line.start.y + next.start.y) / 2}
+      const midEnd = { x: (line.end.x + next.end.x) / 2, y: (line.end.y + next.end.y) / 2}
       this.placeMonster(new Phaser.Line(midStart.x, midStart.y, midEnd.x, midEnd.y))
     })
-    //  cursors = game.state.input.keyboard.createCursorKeys()
+
+    this.ship = new Ship(this, this.outerPoints, 0)
+  }
+
+  createShape (shrinkFactor) {
+    const SHRINK = FACTOR / shrinkFactor
+    const OFFSET = (FACTOR - SHRINK)
+    const points = this.pointsArray.map((pt) => {
+      return new Phaser.Point(pt[0] * SHRINK + OFFSET / 2, pt[1] * SHRINK + OFFSET / 2)
+    })
+
+    return points
   }
 
   drawOuter () {
     if (!this.outerPoints) {
-      this.outerPoints = this.pointsArray.map((pt) => {
-        return new Phaser.Point(pt[0] * FACTOR, pt[1] * FACTOR)
-      })
+      this.outerPoints = this.createShape(1)
     }
 
     this._drawLines(this._buildPoly(this.outerPoints), Colors.HI)
@@ -48,11 +59,7 @@ export default class Board extends Phaser.Group {
 
   drawInner () {
     if (!this.innerPoints) {
-      const SHRINK = FACTOR / 3
-      const OFFSET = (FACTOR - SHRINK)
-      this.innerPoints = this.pointsArray.map((pt) => {
-        return new Phaser.Point(pt[0] * SHRINK + OFFSET / 2, pt[1] * SHRINK + OFFSET / 2)
-      })
+      this.innerPoints = this.createShape(3)
     }
 
     this._drawLines(this._buildPoly(this.innerPoints), Colors.MLIGHT)
@@ -61,8 +68,8 @@ export default class Board extends Phaser.Group {
   _buildPoly (points) {
     const lines = []
     for (var p = 0; p < points.length; p++) {
-      const next = (p === points.length - 1 ? 0 : p + 1)
-      lines.push(new Phaser.Line(points[p].x, points[p].y, points[next].x, points[next].y))
+      const next = helpers.next(points, p)
+      lines.push(new Phaser.Line(points[p].x, points[p].y, next.x, next.y))
     }
 
     return lines
@@ -110,13 +117,11 @@ export default class Board extends Phaser.Group {
   update () {
     this.angle += -0.3
 
-    // if (cursors.up.isDown) {
-    //   this.scale.x += -0.01
-    //   this.scale.y += -0.01
-    // } else if (cursors.down.isDown) {
-    //   this.scale.x += 0.01
-    //   this.scale.y += 0.01
-    // }
+    if (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
+      this.ship.nextPos()
+    } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
+      this.ship.prevPos()
+    }
 
     this.monsters.forEach((mo, i) => {
       mo.update(step)
