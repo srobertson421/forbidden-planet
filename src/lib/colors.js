@@ -6,3 +6,5 @@ export default {
   'LIGHT': 0x63C132,
   'CONTRAST': 0xF5821F
 }
+
+// http://www.color-hex.com/color-palette/19636
