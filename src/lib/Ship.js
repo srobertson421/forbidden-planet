@@ -5,13 +5,14 @@ import helpers from './helpers'
 const MOVEMENT_DELAY = 100;
 
 export default class Ship {
-  constructor (board, outerPoints, pos, game) {
-    const shape = new Phaser.Graphics(board.game, 0, 0)
+  constructor (game, board, outerPoints, pos) {
+    this.game = game;
+
+    const shape = new Phaser.Graphics(this.game, 0, 0)
     this.shape = shape
     this.outerPoints = outerPoints
     this.extraPoints = board.createShape(0.9)
     this.movementTimer = 0;
-    this.game = game;
 
     this.pos = pos
     this.drawShip(this.pos)
