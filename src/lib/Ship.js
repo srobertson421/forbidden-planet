@@ -2,7 +2,7 @@ import Phaser from 'phaser'
 import colors from './colors'
 import helpers from './helpers'
 
-const MOVEMENT_DELAY = 250;
+const MOVEMENT_DELAY = 100;
 
 export default class Ship {
   constructor (board, outerPoints, pos, game) {
