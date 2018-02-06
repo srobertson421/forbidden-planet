@@ -2,12 +2,16 @@ import Phaser from 'phaser'
 import colors from './colors'
 import helpers from './helpers'
 
+const MOVEMENT_DELAY = 250;
+
 export default class Ship {
-  constructor (board, outerPoints, pos) {
+  constructor (board, outerPoints, pos, game) {
     const shape = new Phaser.Graphics(board.game, 0, 0)
     this.shape = shape
     this.outerPoints = outerPoints
     this.extraPoints = board.createShape(0.9)
+    this.movementTimer = 0;
+    this.game = game;
 
     this.pos = pos
     this.drawShip(this.pos)
@@ -16,13 +20,19 @@ export default class Ship {
   }
 
   nextPos () {
-    this.pos = (this.pos + 1 === this.outerPoints.length ? 0 : this.pos + 1)
-    this.drawShip(this.pos)
+    if(this.movementTimer < this.game.time.now) {
+      this.pos = (this.pos + 1 === this.outerPoints.length ? 0 : this.pos + 1)
+      this.drawShip(this.pos)
+      this.movementTimer = this.game.time.now + MOVEMENT_DELAY;
+    }
   }
 
   prevPos () {
-    this.pos = (this.pos - 1 < 0 ? this.outerPoints.length - 1 : this.pos - 1)
-    this.drawShip(this.pos)
+    if(this.movementTimer < this.game.time.now) {
+      this.pos = (this.pos - 1 < 0 ? this.outerPoints.length - 1 : this.pos - 1)
+      this.drawShip(this.pos)
+      this.movementTimer = this.game.time.now + MOVEMENT_DELAY;
+    }
   }
 
   drawShip (pos) {
