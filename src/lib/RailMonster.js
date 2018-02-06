@@ -3,17 +3,17 @@ import colors from './colors'
 
 export default class RailMonster {
   constructor (board, startPt, endPt, steps, onFinish) {
-    const spr = new Phaser.Graphics(board.game, 0, 0)
-    spr.x = startPt.x
-    spr.y = startPt.y
-    this.spr = spr
+    const shape = new Phaser.Graphics(board.game, 0, 0)
+    shape.x = startPt.x
+    shape.y = startPt.y
+    this.shape = shape
 
-    this.spr.lineStyle(1, colors.HI)
-    this.spr.moveTo(-2, -2)// moving position of graphic if you draw mulitple lines
-    this.spr.lineTo(3, 3)
-    this.spr.moveTo(-2, 3)// moving position of graphic if you draw mulitple lines
-    this.spr.lineTo(3, -2)
-    board.add(this.spr);
+    this.shape.lineStyle(1, colors.HI)
+    this.shape.moveTo(-2, -2)// moving position of graphic if you draw mulitple lines
+    this.shape.lineTo(3, 3)
+    this.shape.moveTo(-2, 3)// moving position of graphic if you draw mulitple lines
+    this.shape.lineTo(3, -2)
+    board.add(this.shape)
 
     const path = []
     let pointsX = [startPt.x, endPt.x]
@@ -31,11 +31,11 @@ export default class RailMonster {
   }
 
   update (step) {
-    this.spr.x = this.path[step].x
-    this.spr.y = this.path[step].y
+    this.shape.x = this.path[step].x
+    this.shape.y = this.path[step].y
 
-    this.spr.angle += 1
-    this.spr.scale.x = step*3/this.path.length
-    this.spr.scale.y = step*3/this.path.length
+    this.shape.angle += 20
+    this.shape.scale.x = step * 5 / this.path.length
+    this.shape.scale.y = step * 5 / this.path.length
   }
 }
